@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class UserController {
     private final HashMap<Integer, User> users = new HashMap();
     private final ArrayList<User> usersArray = new ArrayList<>();
-    int idUser;
+    private  int idUser=0;
 
     @GetMapping
     public ArrayList<User> findAll() {
@@ -54,11 +54,4 @@ public class UserController {
         }
         return user;
     }
-
 }
-
-
-
-
-
-

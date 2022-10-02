@@ -7,10 +7,10 @@ import java.time.LocalDate;
 
 public class FilmValidation {
     public static void validateFilm(Film film) {
-        if (film.getName().isEmpty()) {
+        if (film.getName().isEmpty()||film.getName()==null) {
             throw new ValidationException("Название не может быть пустым");
         }
-        if (film.getDescription().length()>200 || film.getDescription().length()==0) {
+        if (film.getDescription().length()>200 || film.getDescription().length()==0||film.getDescription()==null) {
             throw new ValidationException("Максимальная длина описания - 200 символов");
         }
         if (film.getDuration()<=0) {

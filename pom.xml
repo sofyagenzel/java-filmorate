@@ -15,6 +15,7 @@
 	<description>Рейтинг фильмов</description>
 	<properties>
 		<java.version>11</java.version>
+		<junit.junit>5</junit.junit>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -29,7 +30,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.20</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -38,10 +38,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>${junit.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

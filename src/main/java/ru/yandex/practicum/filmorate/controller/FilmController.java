@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class FilmController {
     private final HashMap<Integer, Film> films = new HashMap();
     private final ArrayList<Film> filmsArray = new ArrayList<>();
-    int idFilm;
+    private int idFilm;
 
     @GetMapping
     public ArrayList<Film> findAll() {
