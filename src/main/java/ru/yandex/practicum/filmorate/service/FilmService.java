@@ -11,8 +11,8 @@ import java.util.*;
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
-    Comparator<Film> filmComp = new FilmComparatorLike();
-    Comparator<Film> filmCompDate = new FilmComparatorDate();
+    private final Comparator<Film> filmComp = new FilmComparatorLike();
+    private final Comparator<Film> filmCompDate = new FilmComparatorDate();
     private final Set<Film> sortFilmList = new TreeSet<>(filmComp.thenComparing(filmCompDate));
 
     @Autowired
@@ -28,8 +28,10 @@ public class FilmService {
     }
 
     public Film deleteLikeFilm(int id, int userId) {
-        if (filmStorage.getFilmById(id) == null || filmStorage.getFilmById(userId) == null) {
-            throw new ObjectNotFoundException("Запись не найдена");
+        if (filmStorage.getFilmById(id) == null) {
+            throw new ObjectNotFoundException("Запись не найдена" + id);
+        } else if (filmStorage.getFilmById(userId) == null) {
+            throw new ObjectNotFoundException("Запись не найдена" + userId);
         } else {
             filmStorage.getFilmById(id).deleteLike(userId);
             return filmStorage.getFilmById(id);
