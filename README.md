@@ -1,7 +1,7 @@
 # java-filmorate
 ![filmorate_db](https://github.com/sofyagenzel/java-filmorate/blob/main/filmorate_db.png)
 Example of query:
-get film by id
+get film by id=1:
 select 
  * 
 from film
