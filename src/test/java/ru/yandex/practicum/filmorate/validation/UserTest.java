@@ -46,7 +46,7 @@ public class UserTest {
                 );
         userService.removeUserById(userId);
         List<User> users = userService.findAll();
-        assertEquals(users.size(), 0);
+        assertEquals(0,users.size());
     }
 
     @Order(2)
@@ -67,7 +67,7 @@ public class UserTest {
 
         int userId = userService.create(user).getId();
         List<User> users = userService.findAll();
-        assertEquals(users.size(), 1);
+        assertEquals(1,users.size());
 
         User user1 = User.builder()
                 .id(userId)
