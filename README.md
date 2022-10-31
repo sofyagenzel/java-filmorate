@@ -12,3 +12,5 @@ select
   username
 from users
 join (select * from friend where user_id=1) as p on users.user_id=p.friend_id;
+
+
