@@ -44,9 +44,7 @@ public class UserTest {
                 .hasValueSatisfying(film ->
                         assertThat(film).hasFieldOrPropertyWithValue("id", userId)
                 );
-        userService.removeUserById(userId);
-        List<User> users = userService.findAll();
-        assertEquals(0,users.size());
+
     }
 
     @Order(2)
@@ -66,8 +64,6 @@ public class UserTest {
                 .build();
 
         int userId = userService.create(user).getId();
-        List<User> users = userService.findAll();
-        assertEquals(1,users.size());
 
         User user1 = User.builder()
                 .id(userId)
