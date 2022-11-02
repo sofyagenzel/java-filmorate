@@ -3,9 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.model.film.FilmStorage;
 
 import java.util.List;
 
@@ -29,11 +28,7 @@ public class FilmService {
     }
 
     public Film getFilmById(int id) {
-        if (filmStorage.getFilmById(id) != null) {
-            return filmStorage.getFilmById(id);
-        } else {
-            throw new ObjectNotFoundException("Запись не найдена");
-        }
+        return filmStorage.getFilmById(id);
     }
 
     public List<Film> findAll() {
@@ -41,11 +36,8 @@ public class FilmService {
     }
 
     public void removeFilmById(int id) {
-        if (filmStorage.getFilmById(id) != null) {
-            filmStorage.removeFilmById(id);
-        } else {
-            throw new ObjectNotFoundException("Запись не удалена");
-        }
+        filmStorage.getFilmById(id);
+        filmStorage.removeFilmById(id);
     }
 
     public List<Film> getPopularFilmList(int count) {
@@ -57,7 +49,6 @@ public class FilmService {
     }
 
     public void deleteLikeFilm(int id, int userId) {
-
         filmStorage.deleteLikeFilm(id, userId);
     }
 }

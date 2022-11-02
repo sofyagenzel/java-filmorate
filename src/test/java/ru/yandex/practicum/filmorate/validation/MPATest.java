@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.MPAService;
 
@@ -35,7 +36,7 @@ public class MPATest {
 
     @Test
     public void getById_false() {
-        assertThrows(EmptyResultDataAccessException.class, () -> mpaService.getMPAByID(6));
+        assertThrows(ObjectNotFoundException.class, () -> mpaService.getMPAByID(6));
     }
 
 

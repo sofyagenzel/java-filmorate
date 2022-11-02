@@ -1,9 +1,8 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.model.film;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.*;
 
@@ -25,7 +24,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public void create(Film film) {
-        idFilm = idFilm + 1;
+        ++idFilm;
         film.setId(idFilm);
         films.put(idFilm, film);
     }
@@ -66,9 +65,8 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ObjectNotFoundException("Запись не найдена" + id);
         } else if (getFilmById(userId) == null) {
             throw new ObjectNotFoundException("Запись не найдена" + userId);
-        } else {
-            getFilmById(id).deleteLike(userId);
         }
+            getFilmById(id).deleteLike(userId);
     }
 
     public List<Film> getPopularFilmList(int count) {

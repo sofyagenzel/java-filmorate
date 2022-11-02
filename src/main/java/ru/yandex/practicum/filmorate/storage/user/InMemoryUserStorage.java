@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -24,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public void create(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
+        if (StringUtils.isBlank(user.getName())) {
             user.setName(user.getLogin());
         }
         idUser = idUser + 1;

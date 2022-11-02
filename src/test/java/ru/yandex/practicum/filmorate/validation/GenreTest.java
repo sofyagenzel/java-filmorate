@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
@@ -24,7 +25,7 @@ public class GenreTest {
 
     @Test
     public void getById_true() {
-        Optional<Genre> mpaOptional = Optional.ofNullable(genreService.getGenreByID(1));
+        Optional<Genre> mpaOptional = Optional.ofNullable(genreService.getGenreById(1));
         assertThat(mpaOptional)
                 .isPresent()
                 .hasValueSatisfying(mpa ->
@@ -34,7 +35,7 @@ public class GenreTest {
 
     @Test
     public void getById_false() {
-        assertThrows(EmptyResultDataAccessException.class, () -> genreService.getGenreByID(10));
+        assertThrows(ObjectNotFoundException.class, () -> genreService.getGenreById(10));
     }
 
     @Test

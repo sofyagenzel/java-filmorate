@@ -5,10 +5,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,16 +29,8 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> findAll() {
         String sqlQuery = "select USER_ID, EMAIL, USERNAME, LOGIN, BIRTHDAY from USERS";
-        return jdbcTemplate.query(sqlQuery,
-                (rs, rowNum) -> new User(
-                        rs.getInt("USER_ID"),
-                        rs.getString("EMAIL"),
-                        rs.getString("USERNAME"),
-                        rs.getString("LOGIN"),
-                        rs.getDate("BIRTHDAY").toLocalDate()
-                ));
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeUser(rs));
     }
-
 
     @Override
     public void create(User user) {
@@ -63,16 +59,12 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(int id) {
+    public User getUserById(int id) throws ObjectNotFoundException {
         String sqlQuery = "select USER_ID, EMAIL, USERNAME, LOGIN,  BIRTHDAY from USERS where USER_ID = ?";
-        return jdbcTemplate.queryForObject(sqlQuery,
-                (rs, rowNum) -> new User(
-                        rs.getInt("USER_ID"),
-                        rs.getString("EMAIL"),
-                        rs.getString("USERNAME"),
-                        rs.getString("LOGIN"),
-                        rs.getDate("BIRTHDAY").toLocalDate()
-                ), id);
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeUser(rs), id)
+                .stream()
+                .findAny()
+                .orElseThrow(() -> new ObjectNotFoundException("Id пользователя не найден"));
     }
 
     @Override
@@ -140,4 +132,12 @@ public class UserDbStorage implements UserStorage {
                 ));
     }
 
+    private User makeUser(ResultSet rs) throws SQLException {
+        Integer id = rs.getInt("USER_ID");
+        String email = rs.getString("EMAIL");
+        String login = rs.getString("USERNAME");
+        String name = rs.getString("LOGIN");
+        LocalDate birthday = rs.getDate("BIRTHDAY").toLocalDate();
+        return new User(id, email, login, name, birthday);
+    }
 }

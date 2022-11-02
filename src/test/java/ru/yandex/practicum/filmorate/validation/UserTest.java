@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -23,11 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserTest {
     private final UserService userService;
 
-    @Order(1)
     @Test
     void getById_remove_true() {
         User user = User.builder()
@@ -47,13 +46,11 @@ public class UserTest {
 
     }
 
-    @Order(2)
     @Test
     void getById_false() {
-        assertThrows(EmptyResultDataAccessException.class, () -> userService.getUserById(7));
+        assertThrows(ObjectNotFoundException.class, () -> userService.getUserById(900));
     }
 
-    @Order(3)
     @Test
     public void getAll_update() {
         User user = User.builder()
@@ -81,7 +78,6 @@ public class UserTest {
                 );
     }
 
-    @Order(4)
     @Test
     public void addRemoveGetFriend() {
         User user = User.builder()
@@ -111,7 +107,6 @@ public class UserTest {
 
     }
 
-    @Order(5)
     @Test
     public void getCommonFriends() {
         User user = User.builder()

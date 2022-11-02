@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.model.film;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -8,7 +8,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MPAStorage;
 
@@ -16,7 +15,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 
 @Repository
@@ -48,13 +48,8 @@ public class FilmDbStorage implements FilmStorage {
             return stmt;
         }, keyHolder);
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-
         if (film.getGenres() != null) {
-            Set<Genre> listGenre = new HashSet<>(film.getGenres());
-            for (Genre genre : listGenre) {
-                genreStorage.createGenres(genre.getId(), film.getId());
-
-            }
+            genreStorage.createGenres(film.getId(), film.getGenres());
         }
     }
 
@@ -72,40 +67,33 @@ public class FilmDbStorage implements FilmStorage {
                 , film.getId());
         genreStorage.deleteGenres(film.getId());
         if (film.getGenres() != null) {
-            Set<Genre> listGenre = new HashSet<>(film.getGenres());
-            List<Genre> uniqList = new ArrayList<>(listGenre);
-            film.setGenres(uniqList);
-            for (Genre genre : listGenre) {
-                genreStorage.createGenres(genre.getId(), film.getId());
-            }
+            genreStorage.createGenres(film.getId(), film.getGenres());
         }
     }
 
     @Override
-    public Film getFilmById(int id) throws EmptyResultDataAccessException {
+    public Film getFilmById(int id) throws ObjectNotFoundException {
         String sqlQuery = "SELECT FILM_ID, NAME, RELEASE, DESCRIPTION, DURATION, MPA_ID " +
                 "FROM FILM " +
                 "WHERE FILM_ID = ?";
-        return jdbcTemplate.queryForObject(sqlQuery,
-                this::makeFilm, id);
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs), id)
+                .stream()
+                .findAny()
+                .orElseThrow(() -> new ObjectNotFoundException("Id фильма не найден"));
     }
-
 
     @Override
     public List<Film> findAll() {
         String sqlQuery = "SELECT FILM_ID, NAME, RELEASE, DESCRIPTION, DURATION,MPA_ID " +
                 "FROM FILM";
-        return jdbcTemplate.query(sqlQuery,
-                this::makeFilm);
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
     }
-
 
     @Override
     public void removeFilmById(int id) throws EmptyResultDataAccessException {
         String sqlQuery = "DELETE FROM FILM WHERE FILM_ID = ?";
         jdbcTemplate.update(sqlQuery, id);
     }
-
 
     @Override
     public List<Film> getPopularFilmList(int count) {
@@ -116,12 +104,11 @@ public class FilmDbStorage implements FilmStorage {
                 "GROUP BY FILM.FILM_ID, LIKES.USER_ID " +
                 "ORDER BY LIKES.USER_ID DESC  " +
                 "LIMIT " + count;
-        return jdbcTemplate.query(sqlQuery,
-                this::makeFilm);
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
     }
 
     @Override
-    public void addLikeFilm(int id, int userId) throws EmptyResultDataAccessException {
+    public void addLikeFilm(int id, int userId) throws ObjectNotFoundException {
         String sqlQuery = "INSERT INTO LIKES (FILM_ID, USER_ID) VALUES (?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -132,19 +119,15 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
     }
 
-
     @Override
-    public void deleteLikeFilm(int id, int userId) throws EmptyResultDataAccessException {
-
+    public void deleteLikeFilm(int id, int userId) throws ObjectNotFoundException {
         String sqlQuery = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
-
         if (jdbcTemplate.update(sqlQuery, id, userId) == 0) {
             throw new ObjectNotFoundException("лайк не найден");
         }
     }
 
-
-    private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
+    private Film makeFilm(ResultSet rs) throws SQLException {
         return new Film(
                 rs.getInt("FILM_ID"),
                 rs.getString("DESCRIPTION"),
@@ -155,5 +138,6 @@ public class FilmDbStorage implements FilmStorage {
                 genreStorage.getFilmGenres(rs.getInt("FILM_ID"))
         );
     }
+
 }
 

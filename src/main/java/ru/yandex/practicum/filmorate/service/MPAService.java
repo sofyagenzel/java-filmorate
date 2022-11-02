@@ -19,12 +19,8 @@ public class MPAService {
         this.mpaStorage = mpaStorage;
     }
 
-    public MPA getMPAByID(int id) {
-        if (mpaStorage.getMPAByID(id) != null) {
-            return mpaStorage.getMPAByID(id);
-        } else {
-            throw new ObjectNotFoundException("Запись не найдена");
-        }
+    public MPA getMPAByID(int id) throws ObjectNotFoundException {
+        return mpaStorage.getMPAByID(id);
     }
 
     public List<MPA> getAllMPA() {

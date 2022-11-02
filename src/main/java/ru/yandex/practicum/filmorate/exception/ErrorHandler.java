@@ -33,5 +33,4 @@ public class ErrorHandler {
                 "Произошла непредвиденная ошибка."
         );
     }
-
 }

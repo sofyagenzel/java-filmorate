@@ -1,9 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.StatusFriendship;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -20,7 +21,7 @@ public class UserService {
     }
 
     public User create(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
+        if (StringUtils.isBlank(user.getName())) {
             user.setName(user.getLogin());
         }
         userStorage.create(user);
@@ -40,56 +41,38 @@ public class UserService {
     }
 
     public User getUserById(int id) {
-        if (userStorage.getUserById(id) != null) {
             return userStorage.getUserById(id);
-        } else {
-            throw new ObjectNotFoundException("Запись не найдена");
-        }
     }
 
     public void removeUserById(int id) {
-        if (userStorage.getUserById(id) != null) {
-            userStorage.removeUserById(id);
-        } else {
-            throw new ObjectNotFoundException("Запись не удалена");
-        }
+        userStorage.getUserById(id);
+        userStorage.removeUserById(id);
     }
 
     public void addNewFriend(int id, int friendId) {
-        if (userStorage.getUserById(id) == null || userStorage.getUserById(friendId) == null) {
-            throw new ObjectNotFoundException("Запись не найдена");
+        userStorage.getUserById(id);
+        userStorage.getUserById(friendId);
+        String status;
+        if (getListFriend(friendId).contains(getUserById(id))) {
+            status = String.valueOf(StatusFriendship.VALIDATED);
         } else {
-            String status;
-            if (getListFriend(friendId).contains(getUserById(id))) {
-                status = "подтвержден";
-            } else {
-                status = "не подтвержден";
-            }
-            userStorage.addNewFriend(id, friendId, status);
+            status = String.valueOf(StatusFriendship.NOT_CONFIRMED);
         }
+        userStorage.addNewFriend(id, friendId, status);
     }
 
     public void removeFriend(int id, int friendId) {
-        if (userStorage.getUserById(id) == null || userStorage.getUserById(friendId) == null) {
-            throw new ObjectNotFoundException("Запись не найдена");
-        } else {
             userStorage.removeFriend(id, friendId);
-        }
     }
 
     public List<User> getListFriend(int id) {
-        if (userStorage.getUserById(id) == null) {
-            throw new ObjectNotFoundException("Запись не найдена");
-        } else {
-            return userStorage.getListFriend(id);
-        }
+        userStorage.getUserById(id);
+        return userStorage.getListFriend(id);
     }
 
     public List<User> getCommonFriends(int id, int secondId) {
-        if ((userStorage.getUserById(id) == null || userStorage.getUserById(secondId) == null)) {
-            throw new ObjectNotFoundException("Запись не найдена");
-        } else {
-            return userStorage.getCommonFriends(id, secondId);
-        }
+        userStorage.getUserById(id);
+        userStorage.getUserById(secondId);
+        return userStorage.getCommonFriends(id, secondId);
     }
 }

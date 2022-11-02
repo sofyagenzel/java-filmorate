@@ -1,14 +1,11 @@
 package ru.yandex.practicum.filmorate.validation;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.EmptyResultDataAccessException;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
@@ -26,13 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FilmTest {
     private final FilmService filmService;
     private final UserService userService;
 
-
-    @Order(1)
     @Test
     void getById_remove_true() {
         Film filmNew = Film.builder()
@@ -44,7 +38,7 @@ public class FilmTest {
                 .build();
 
         int filmId = filmService.create(filmNew).getId();
-
+        System.out.println(filmId);
         Optional<Film> filmOptional = Optional.ofNullable(filmService.getFilmById(filmId));
         assertThat(filmOptional)
                 .isPresent()
@@ -53,13 +47,11 @@ public class FilmTest {
                 );
     }
 
-    @Order(2)
     @Test
     void getById_false() {
-        assertThrows(EmptyResultDataAccessException.class, () -> filmService.getFilmById(6));
+        assertThrows(ObjectNotFoundException.class,() -> filmService.getFilmById(6));
     }
 
-    @Order(3)
     @Test
     public void getAll_update() {
         Film filmNew = Film.builder()
@@ -89,7 +81,6 @@ public class FilmTest {
                 );
     }
 
-    @Order(4)
     @Test
     public void getPopularFilmList() {
         Film filmNew = Film.builder()
@@ -114,7 +105,6 @@ public class FilmTest {
         assertEquals(film.size(), 1);
     }
 
-    @Order(5)
     @Test
     public void addLikeDeleteFilm() {
         Film filmNew = Film.builder()
