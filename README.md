@@ -1,2 +1,15 @@
 # java-filmorate
-Template repository for Filmorate project.
+![filmorate_db](https://github.com/sofyagenzel/java-filmorate/blob/main/filmorate_db.png)
+Example of query:
+get film by id=1:
+select 
+ * 
+from film
+where film_id=1;
+
+get list of friend by id=1:
+select 
+  username
+from users
+join (select * from friend where user_id=1) as p on users.user_id=p.friend_id;
+
