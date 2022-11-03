@@ -18,11 +18,15 @@ import java.util.Set;
 @SuperBuilder
 public class Film {
     int id;
-    @Size(min = 1, max = 200) String description;
-    @NotEmpty(message = "название не может быть пустым") String name;
-    @Positive int duration;
+    @Size(min = 1, max = 200)
+    private String description;
+    @NotEmpty(message = "название не может быть пустым")
+    private String name;
+    @Positive
+    private int duration;
     @After("1895-12-28")
-    @NotNull LocalDate releaseDate;
+    @NotNull
+    LocalDate releaseDate;
     private Set<Integer> listLikes = new HashSet<>();
     @NotNull
     private MPA mpa;

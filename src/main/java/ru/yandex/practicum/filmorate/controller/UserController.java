@@ -27,9 +27,7 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        System.out.println("ееее");
         log.info("Валидация пройдена.");
-        System.out.println("ееее");
         return userService.create(user);
     }
 
